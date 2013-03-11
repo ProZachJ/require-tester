@@ -13,28 +13,34 @@ var vows = require('vows'),
 
 vows.describe('Factory').addBatch({
     'when requiring a factory':{
-        topic: fact ,
+        topic: function(){return fact},
         'we get an object': function(topic){
-          assert.isObject(fact);
-        }
-    },
-    'when requiring a factory twice':{
-        topic: fact2,
-        'we get another object': function(topic){
-            assert.isObject(fact2);
-            assert.isObject(fact);
+            assert.isObject(topic);
         },
-        'both objects are the same': function(topic){
-            assert.equal(fact, fact2);
-        }
-    },
-    'modifing the first object included':{
-        topic: fact.name = 'newname',
-        'also changes the second': function(topic){
-            console.log(fact2.name);
-            console.log(fact.name);
-            assert.equal(fact.name, fact2.name);
+        'it has a name property': function(topic){
+            assert.isString(topic.name)
+        },
+        'the name property equals "test"': function(topic){
+            assert.equal(topic.name, 'test');
+        },
+        'when requiring a factory a second time':{
+            topic: function(){return fact2},
+            'we get another object': function(topic){
+                assert.isObject(topic);
+                assert.isObject(fact);
+            },
+            'both objects are the same': function(topic){
+                assert.equal(fact, topic);
+            },
+            'modifing the first object included':{
+                topic: function(){
+                    fact.name = 'new name';
+                    return fact.name
+                },
+                'also changes the second': function(topic){
+                    assert.equal(topic, fact2.name);
+                }
+            }
         }
     }
-
 }).run();
